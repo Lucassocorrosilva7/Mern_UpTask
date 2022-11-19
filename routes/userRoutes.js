@@ -1,9 +1,11 @@
 import express  from "express";
-import { users } from "../controller/userController.js";
+import { register } from "../controller/userController.js";
 const router = express.Router();
 
-router.get('/',users);
+// Autenticacao, Registro e confirmacao de usuarios
+router.post('/', register)
 
 export default router;
+
 
 

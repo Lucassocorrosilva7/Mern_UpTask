@@ -1,5 +1,6 @@
 import User from "../model/User.js";
 import generateId from "../helpers/generateid.js";
+import generateJWT from "../helpers/generateJWT.js";
 
 const register = async (req, res) => {
   const { email } = req.body;
@@ -31,6 +32,17 @@ const authentication = async (req, res) => {
   if (!user.confirm) {
     const error = new Error("Sua conta não foi confirmada");
     return res.status(403).json({ msg: error.message });
+  }
+  if (await user.confirmPassword(password)) {
+    res.json({
+     _id: user._id,
+     name: user.name,
+     email: user.email,
+     token: generateJWT(user._id),
+    })
+  } else {
+    const error = new Error("Senha incorreta");
+    return res.status(404).json({ msg: error.message });
   }
 };
 

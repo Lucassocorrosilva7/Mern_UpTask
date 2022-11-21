@@ -1,8 +1,8 @@
-import express from "express";
-import connectDb from "./config/db.js";
-import dotenv from "dotenv";
-import userRoutes from "./routes/userRoutes.js";
-import cors from "cors";
+import express from 'express';
+import dotenv from 'dotenv';
+import cors from 'cors';
+import connectDb from './config/db.js';
+import userRoutes from './routes/userRoutes.js';
 
 const app = express();
 app.use(express.json());
@@ -11,7 +11,7 @@ dotenv.config();
 
 connectDb();
 
-app.use("/api/users", userRoutes);
+app.use('/api/users', userRoutes);
 
 app.use(cors());
 

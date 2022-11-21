@@ -4,7 +4,7 @@ import generateJWT from "../helpers/generateJWT.js";
 
 const register = async (req, res) => {
   const { email } = req.body;
-  const existUser = await User.findOne({ email: email });
+  const existUser = await User.findOne({ email });
 
   if (existUser) {
     const error = new Error("Usuário registrado");
@@ -64,8 +64,66 @@ const confirm = async (req, res) => {
   }
 };
 
-const forgotPassword = async (req,res) => {
+const forgotPassword = async (req, res) => {
+  const { email } = req.body;
+  const user = await User.findOne({ email });
+  if (!user) {
+    const error = new Error("Usuário não existe");
+    return res.status(404).json({ msg: error.message });
+  }
 
-}
+  try {
+    user.token = generateId();
+    await user.save();
+    res.json({ msg: "Enviamos um email com as instruções de recuperação" });
+  } catch (error) {
+    console.log(error);
+  }
+};
 
-export { register, authentication, confirm,forgotPassword };
+const proveToken = async (req, res) => {
+  const { token } = req.params;
+  const tokenValid = await User.findOne({ token });
+
+  if (tokenValid) {
+    res.json({ msg: "Token valido" });
+  } else {
+    const error = new Error("Token não é valido");
+    return res.status(404).json({ msg: error.message });
+  }
+};
+
+const newPassword = async (req, res) => {
+  const { token } = req.params;
+  const { password } = req.body;
+  const user = await User.findOne({ token });
+
+  if (user) {
+    user.password = password;
+    user.tokem = "";
+    try {
+      await user.save();
+      res.json({ msg: "Senha alterada com sucesso" });
+    } catch (error) {
+      console.log(error);
+    }
+  } else {
+    const error = new Error("Token não é valido");
+    return res.status(404).json({ msg: error.message });
+  }
+};
+
+const perfil = () => {
+  const { user } = req;
+  res.json(user);
+};
+
+export {
+  register,
+  authentication,
+  confirm,
+  forgotPassword,
+  proveToken,
+  newPassword,
+  perfil,
+};

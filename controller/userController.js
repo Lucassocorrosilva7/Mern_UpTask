@@ -1,4 +1,5 @@
 import User from "../model/User.js";
+import generateId from "../helpers/generateid.js";
 
 const register = async (req, res) => {
   const { email } = req.body;
@@ -11,6 +12,7 @@ const register = async (req, res) => {
 
   try {
     const user = new User(req.body);
+    user.token = generateId();
     const userDB = await user.save();
     res.json(userDB);
     console.log(user);
@@ -19,4 +21,17 @@ const register = async (req, res) => {
   }
 };
 
-export { register };
+const authentication = async (req, res) => {
+  const { email, password } = req.body;
+  const user = await User.findOne({ email });
+  if (!user) {
+    const error = new Error("Usuário não existe");
+    return res.status(404).json({ msg: error.message });
+  }
+  if (!user.confirm) {
+    const error = new Error("Sua conta não foi confirmada");
+    return res.status(403).json({ msg: error.message });
+  }
+};
+
+export { register, authentication };

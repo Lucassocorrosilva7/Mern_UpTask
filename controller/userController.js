@@ -35,15 +35,37 @@ const authentication = async (req, res) => {
   }
   if (await user.confirmPassword(password)) {
     res.json({
-     _id: user._id,
-     name: user.name,
-     email: user.email,
-     token: generateJWT(user._id),
-    })
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      token: generateJWT(user._id),
+    });
   } else {
     const error = new Error("Senha incorreta");
     return res.status(404).json({ msg: error.message });
   }
 };
 
-export { register, authentication };
+const confirm = async (req, res) => {
+  const { token } = req.params;
+  const userConfirm = await User.findOne({ token });
+  if (!userConfirm) {
+    const error = new Error("Token não é valido");
+    return res.status(404).json({ msg: error.message });
+  }
+
+  try {
+    userConfirm.confirm = true;
+    userConfirm.token = "";
+    await userConfirm.save();
+    res.json({ msg: "Usuário confirmado" });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const forgotPassword = async (req,res) => {
+
+}
+
+export { register, authentication, confirm,forgotPassword };

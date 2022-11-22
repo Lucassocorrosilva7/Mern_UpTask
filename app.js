@@ -12,6 +12,7 @@ dotenv.config();
 connectDb();
 
 app.use('/api/users', userRoutes);
+app.use('/api/projects', userRoutes);
 
 app.use(cors());
 

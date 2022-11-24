@@ -1,6 +1,18 @@
+import Project from "../model/Project.js";
+
 const obterProjects = async (req, res) => {};
 
-const newProject = async (req, res) => {};
+const newProject = async (req, res) => {
+  const project = new Project(req.body);
+  project.created = req.user._id;
+
+  try {
+    const storedProject = await project.save();
+    res.json(storedProject);
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 const obterProject = async (req, res) => {};
 

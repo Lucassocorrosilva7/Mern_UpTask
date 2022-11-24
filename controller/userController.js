@@ -113,7 +113,7 @@ const newPassword = async (req, res) => {
   }
 };
 
-const perfil = () => {
+const perfil = (req,res) => {
   const { user } = req;
   res.json(user);
 };

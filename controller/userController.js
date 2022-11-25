@@ -1,4 +1,4 @@
-import User from "../model/User.js";
+import User from "../models/User.js";
 import generateId from "../helpers/generateid.js";
 import generateJWT from "../helpers/generateJWT.js";
 

@@ -14,6 +14,11 @@ const tasksSchema = mongoose.Schema({
     state: {
         type: Boolean,
         default: false,
-    }, 
-    
+    },
+    deliveryDate: {
+        type: Date,
+        required: true,
+        default: Date.now()
+    } 
+
 })

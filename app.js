@@ -4,6 +4,7 @@ import cors from 'cors';
 import connectDb from './config/db.js';
 import userRoutes from './routes/userRoutes.js';
 import projectRouter from './routes/projectRouter.js';
+import taskRoutes from './routes/taskRoutes.js';
 
 const app = express();
 app.use(express.json());
@@ -14,6 +15,7 @@ connectDb();
 
 app.use('/api/users', userRoutes);
 app.use('/api/projects', projectRouter);
+app.use('/api/tasks', taskRoutes);
 
 app.use(cors());
 

@@ -72,7 +72,28 @@ const updatedTask = async (req, res) => {
   }
 };
 
-const deleteTask = async (req, res) => {};
+const deleteTask = async (req, res) => {
+  const { id } = req.params;
+
+  const task = await Tasks.findById(id).populate("project");
+
+  if (!task) {
+    const error = new Error("Tarefa não encontrada");
+    return res.status(404).json({ msg: error.message });
+  }
+
+  if (task.project.created.toString() !== req.user._id.toString()) {
+    const error = new Error("Ação invalida");
+    return res.status(403).json({ msg: error.message });
+  }
+
+  try {
+    await task.deleteOne();
+    res.json({ msg: "Tarefa Eliminada" });
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 const changeState = async (req, res) => {};
 

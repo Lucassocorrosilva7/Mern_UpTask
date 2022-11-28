@@ -44,7 +44,33 @@ const obterTask = async (req, res) => {
   res.json(task);
 };
 
-const updatedTask = async (req, res) => {};
+const updatedTask = async (req, res) => {
+  const { id } = req.params;
+
+  const task = await Tasks.findById(id).populate("project");
+
+  if (!task) {
+    const error = new Error("Tarefa não encontrada");
+    return res.status(404).json({ msg: error.message });
+  }
+
+  if (task.project.created.toString() !== req.user._id.toString()) {
+    const error = new Error("Ação invalida");
+    return res.status(403).json({ msg: error.message });
+  }
+
+  task.name = req.body.name || task.name;
+  task.description = req.body.description || task.description;
+  task.property = req.body.property || task.property;
+  task.deliveryDate = req.body.deliveryDate || task.deliveryDate;
+
+  try {
+    const storedTask = await task.save();
+    res.json(storedTask);
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 const deleteTask = async (req, res) => {};
 

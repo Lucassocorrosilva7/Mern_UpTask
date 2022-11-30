@@ -1,7 +1,8 @@
-import Project from '../models/Project.js';
+import Project from "../models/Project.js";
+import Tasks from "../models/Tasks.js";
 
 const obterProjects = async (req, res) => {
-  const projects = await Project.find().where('created').equals(req.user);
+  const projects = await Project.find().where("created").equals(req.user);
   res.json(projects);
 };
 
@@ -24,18 +25,22 @@ const obterProject = async (req, res) => {
     const project = await Project.findById(id.trim());
 
     if (!project) {
-      const error = new Error('Projeto não existe');
+      const error = new Error("Projeto não existe");
       return res.status(404).json({ msg: error.message });
     }
 
     if (project.created.toString() !== req.user._id.toString()) {
-      const error = new Error('Ação invalida');
+      const error = new Error("Ação invalida");
       return res.status(401).json({ msg: error.message });
     }
 
-    res.json(project);
+    const tasks = await Tasks.find().where("project").equals(project._id);
+    res.json({
+      project,
+      tasks,
+    });
   } else {
-    const error = new Error('Id inválido');
+    const error = new Error("Id inválido");
     return res.status(404).json({ msg: error.message });
   }
 };
@@ -46,12 +51,12 @@ const editProject = async (req, res) => {
     const project = await Project.findById(id.trim());
 
     if (!project) {
-      const error = new Error('Projeto não existe');
+      const error = new Error("Projeto não existe");
       return res.status(404).json({ msg: error.message });
     }
 
     if (project.created.toString() !== req.user._id.toString()) {
-      const error = new Error('Ação invalida');
+      const error = new Error("Ação invalida");
       return res.status(401).json({ msg: error.message });
     }
     project.name = req.body.name || project.name;
@@ -75,22 +80,22 @@ const deleteProject = async (req, res) => {
     const project = await Project.findById(id.trim());
 
     if (!project) {
-      const error = new Error('Projeto não existe');
+      const error = new Error("Projeto não existe");
       return res.status(404).json({ msg: error.message });
     }
 
     if (project.created.toString() !== req.user._id.toString()) {
-      const error = new Error('Ação invalida');
+      const error = new Error("Ação invalida");
       return res.status(401).json({ msg: error.message });
     }
     try {
       await project.deleteOne();
-      res.json({ msg: 'Projeto Eliminado' });
+      res.json({ msg: "Projeto Eliminado" });
     } catch (error) {
       console.log(error);
     }
   } else {
-    const error = new Error('Id inválido');
+    const error = new Error("Id inválido");
     return res.status(404).json({ msg: error.message });
   }
 };
@@ -99,7 +104,6 @@ const addCollaborator = async (req, res) => {};
 
 const deleteCollaborator = async (req, res) => {};
 
-const obterTasks = async (req, res) => {};
 
 export {
   obterProjects,
@@ -109,5 +113,4 @@ export {
   deleteProject,
   addCollaborator,
   deleteCollaborator,
-  obterTasks,
 };

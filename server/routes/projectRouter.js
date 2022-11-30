@@ -20,7 +20,6 @@ router
   .get(checkAuth, obterProject)
   .put(checkAuth, editProject)
   .delete(checkAuth, deleteProject);
-
 router.post('/addCollaborator/:id', checkAuth, addCollaborator);
 router.post('/deleteCollaborator/:id', checkAuth, deleteCollaborator);
 

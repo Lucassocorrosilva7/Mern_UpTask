@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import Alert from "../components/Alert";
+import axios from "axios";
 
 const Register = () => {
   const [name, setName] = useState("");
@@ -9,11 +10,48 @@ const Register = () => {
   const [repeatPassword, setRepeatPassword] = useState("");
   const [alert, setAlert] = useState({});
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if ([name, email, password, repeatPassword].includes("")) {
       setAlert({ msg: "Todos os campos são obrigátorios", error: true });
       return;
+    }
+
+    if (password !== repeatPassword) {
+      setAlert({ msg: "As senhas são diferentes", error: true });
+      return;
+    }
+
+    if (password.length < 6) {
+      setAlert({
+        msg: "A senha precisa ter mais de 6 caracteres",
+        error: true,
+      });
+      return;
+    }
+
+    setAlert({});
+    try {
+      const { data } = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/users`,
+        {
+          name,
+          email,
+          password,
+        }
+      );
+      setAlert({
+        msg: data.msg,
+        error: false,
+      });
+      setName("");
+      setEmail("");
+      setPassword("");
+      setRepeatPassword("");
+    } catch (error) {
+      setAlert({
+        msg: error.response.data.msg,
+        error: true,
+      });
     }
   };
 
@@ -25,7 +63,7 @@ const Register = () => {
         Criar conta
       </h1>
 
-      {msg && <Alert alert={alert}/>}
+      {msg && <Alert alert={alert} />}
 
       <form
         onSubmit={handleSubmit}
@@ -75,6 +113,7 @@ const Register = () => {
             type="password"
             placeholder="Senha de Registro"
             className="w-full mt-3 p-3 border rounded-xl bg-gray-50"
+            autoComplete="on"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
@@ -91,6 +130,7 @@ const Register = () => {
             type="password"
             placeholder="Repetir Senha"
             className="w-full mt-3 p-3 border rounded-xl bg-gray-50"
+            autoComplete="on"
             value={repeatPassword}
             onChange={(e) => setRepeatPassword(e.target.value)}
           />

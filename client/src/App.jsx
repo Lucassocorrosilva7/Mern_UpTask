@@ -6,7 +6,6 @@ import Register from "./pages/Register";
 import NewPassword from "./pages/NewPassword";
 import ConfirmAccount from "./pages/ConfirmAccount";
 
-
   function App(){
     return (
       <BrowserRouter>

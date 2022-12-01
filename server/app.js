@@ -13,19 +13,18 @@ dotenv.config();
 
 connectDb();
 
-const whiteList = ["http://127.0.0.1:5173"];
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "X-PINGOTHER, Content-Type, Authorization"
+  );
+  app.use(cors());
+  next();
+});
 
-const corsOptions = {
-  origin: function (origin, callback) {
-    if (whiteList.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error("Error de Cors"));
-    }
-  },
-};
-
-app.use(cors(corsOptions));
+app.use(cors());
 
 app.use("/api/users", userRoutes);
 app.use("/api/projects", projectRouter);

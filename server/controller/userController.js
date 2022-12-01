@@ -1,13 +1,14 @@
 import User from "../models/User.js";
 import generateId from "../helpers/generateid.js";
 import generateJWT from "../helpers/generateJWT.js";
+import { emailRegister } from "../helpers/email.js";
 
 const register = async (req, res) => {
   const { email } = req.body;
   const existUser = await User.findOne({ email });
 
   if (existUser) {
-    const error = new Error("Usuário registrado");
+    const error = new Error("Esse usuário já está registrado");
     return res.status(400).json({ msg: error.message });
   }
 
@@ -15,7 +16,15 @@ const register = async (req, res) => {
     const user = new User(req.body);
     user.token = generateId();
     const userDB = await user.save();
-    res.json(userDB);
+    emailRegister({
+      email: user.email,
+      name: user.name,
+      token: user.token,
+    });
+
+    res.json({
+      msg: "Usuário criado com sucesso, Revise seu email para confirmar sua conta",
+    });
     console.log(user);
   } catch (error) {
     console.log(error.message);
@@ -113,7 +122,7 @@ const newPassword = async (req, res) => {
   }
 };
 
-const perfil = (req,res) => {
+const perfil = (req, res) => {
   const { user } = req;
   res.json(user);
 };

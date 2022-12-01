@@ -1,9 +1,13 @@
-import React from 'react'
+import React from "react";
 
 const ConfirmAccount = () => {
   return (
-    <div>ConfirmAccount</div>
-  )
-}
+    <>
+      <h1 className="text-sky-600 font-black text-4xl capitalize text-center">
+        Confirma sua conta e comece a criar seus projetos
+      </h1>
+    </>
+  );
+};
 
-export default ConfirmAccount
+export default ConfirmAccount;

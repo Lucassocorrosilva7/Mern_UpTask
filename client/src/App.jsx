@@ -13,7 +13,7 @@ import ConfirmAccount from "./pages/ConfirmAccount";
         <Routes>
             <Route path="/" element={<AuthLayout/>}>
                 <Route index element={<Login/>} />
-                <Route path="registar" element={<Register/>} />
+                <Route path="registrar" element={<Register/>} />
                 <Route path="recuperar-senha" element={<RecoverPassword/>} />
                 <Route path="recuperar-senha/:token" element={<NewPassword/>} />
                 <Route path="confirmar/:id" element={<ConfirmAccount/>} />

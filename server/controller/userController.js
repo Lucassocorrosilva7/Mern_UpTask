@@ -1,7 +1,7 @@
 import User from "../models/User.js";
 import generateId from "../helpers/generateid.js";
 import generateJWT from "../helpers/generateJWT.js";
-import { emailRegister } from "../helpers/email.js";
+import { emailRegister, emailForgotThePassword } from "../helpers/email.js";
 
 const register = async (req, res) => {
   const { email } = req.body;
@@ -67,6 +67,7 @@ const confirm = async (req, res) => {
     userConfirm.confirm = true;
     userConfirm.token = "";
     await userConfirm.save();
+
     res.json({ msg: "Usuário confirmado" });
   } catch (error) {
     console.log(error);
@@ -84,6 +85,13 @@ const forgotPassword = async (req, res) => {
   try {
     user.token = generateId();
     await user.save();
+
+    emailForgotThePassword({
+      email: user.email,
+      name: user.name,
+      token: user.token,
+    });
+
     res.json({ msg: "Enviamos um email com as instruções de recuperação" });
   } catch (error) {
     console.log(error);
@@ -109,7 +117,7 @@ const newPassword = async (req, res) => {
 
   if (user) {
     user.password = password;
-    user.tokem = "";
+    user.token = "";
     try {
       await user.save();
       res.json({ msg: "Senha alterada com sucesso" });

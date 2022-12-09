@@ -4,11 +4,11 @@ export const emailRegister = async (datas) => {
   const { email, name, token } = datas;
 
   const transport = nodemailer.createTransport({
-    host: "smtp.mailtrap.io",
-    port: 2525,
+    host: process.env.EMAIL_HOST,
+    port: process.env.EMAIL_PORT,
     auth: {
-      user: "8f0cc637e4d01e",
-      pass: "ee6f866d7cab26",
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASS,
     },
   });
 
@@ -22,6 +22,32 @@ export const emailRegister = async (datas) => {
         <p>Sua conta está quase pronta. você só tem que verifica-lo no seguinte link:</p>
             <a href="${process.env.FRONTEND_URL}/confirmar/${token}">Compravar sua conta</a>
         <p>Se você não criou essa conta, pode ignorar a mensagem.</p>
+    `,
+  });
+};
+
+export const emailForgotThePassword = async (datas) => {
+  const { email, name, token } = datas;
+
+  const transport = nodemailer.createTransport({
+    host: process.env.EMAIL_HOST,
+    port: process.env.EMAIL_PORT,
+    auth: {
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASS,
+    },
+  });
+
+  const info = await transport.sendMail({
+    from: '"UpTask - Administrador de Projetos" <contas@uptask.com>',
+    to: email,
+    subject: "UpTask, Recuperando sua senha",
+    text: "Recuperando sua senha",
+    html: `
+        <p>Olá ${name} Solicitou recuperação de sua senha</p>
+        <p>Siga o seguinte link para recuperar e gerar uma nova senha:</p>
+            <a href="${process.env.FRONTEND_URL}recuperar-senha/${token}">Restabelecendo senha</a>
+        <p>Se você não solicitou esse e-mail, pode ignorar a mensagem.</p>
     `,
   });
 };

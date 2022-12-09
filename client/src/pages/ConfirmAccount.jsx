@@ -1,41 +1,38 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import axios from "axios";
 import Alert from "../components/Alert";
+import clientAxios from "../config/clientAxios";
 
 const ConfirmAccount = () => {
-
   const [alert, setAlert] = useState({});
-  const [accountConfirm, setAccountConfirm] = useState(false)
+  const [accountConfirm, setAccountConfirm] = useState(false);
 
   const params = useParams();
-  
+
   const { id } = params;
 
   useEffect(() => {
     const confirmAccount = async () => {
       try {
-        const url = `http://localhost:4000/api/users/confirm/${id}`
-        const { data } = await axios(url)
+        const url = `/users/confirm/${id}`;
+        const { data } = await clientAxios(url);
 
         setAlert({
           msg: data.msg,
-          error: false
-        })
+          error: false,
+        });
         setAccountConfirm(true);
-
       } catch (error) {
-       setAlert({
-        msg: error.response.data.msg,
-        error: true
-       })
+        setAlert({
+          msg: error.response.data.msg,
+          error: true,
+        });
       }
-    }
+    };
     return () => confirmAccount();
-
   }, []);
 
-  const {msg} = alert
+  const { msg } = alert;
 
   return (
     <>
@@ -43,14 +40,14 @@ const ConfirmAccount = () => {
         Confirma sua conta e comece a criar seus projetos
       </h1>
       <div className="mt-20 md:mt-10 shadow-lg px-5 py-10 rounded-xl bg-white">
-        {msg && <Alert alert={alert}/>}
+        {msg && <Alert alert={alert} />}
         {accountConfirm && (
           <Link
-          className="block text-center my-5 text-slate-500 uppercase text-sm"
-          to="/"
-        >
-          Íniciar Sessão
-        </Link>
+            className="block text-center my-5 text-slate-500 uppercase text-sm"
+            to="/"
+          >
+            Íniciar Sessão
+          </Link>
         )}
       </div>
     </>

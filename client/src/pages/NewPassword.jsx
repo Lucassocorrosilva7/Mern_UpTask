@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import axios from "axios";
 import Alert from "../components/Alert";
+import clientAxios from "../config/clientAxios";
 
 const NewPassword = () => {
   const [password, setPassword] = useState("");
   const [validToken, setValidToken] = useState(false);
   const [alert, setAlert] = useState({});
-  const [passwordModified, setPasswordModified] = useState(false)
+  const [passwordModified, setPasswordModified] = useState(false);
 
   const params = useParams();
   const { token } = params;
@@ -15,9 +15,7 @@ const NewPassword = () => {
   useEffect(() => {
     const proveToken = async () => {
       try {
-        await axios.get(
-          `http://localhost:4000/api/users/forgot-the-password/${token}`
-        );
+        await clientAxios.get(`/users/forgot-the-password/${token}`);
         setValidToken(true);
       } catch (error) {
         setAlert({
@@ -41,15 +39,14 @@ const NewPassword = () => {
       return;
     }
     try {
-      const url = `http://localhost:4000/api/users/forgot-the-password/${token}`
-      
-      const { data } = await axios.post(url, {password} );
+      const url = `/users/forgot-the-password/${token}`;
+
+      const { data } = await clientAxios.post(url, { password });
       setAlert({
         msg: data.msg,
-        error: false
-      })
+        error: false,
+      });
       setPasswordModified(true);
-      
     } catch (error) {
       setAlert({
         msg: error.response.data.msg,
@@ -67,7 +64,7 @@ const NewPassword = () => {
       </h1>
       {msg ? <Alert alert={alert} /> : null}
 
-      { validToken ? (
+      {validToken ? (
         <form
           onSubmit={handleSubmit}
           className="my-10 bg-white shadow rounded  p-10"
@@ -86,7 +83,7 @@ const NewPassword = () => {
               autoComplete="on"
               className="w-full mt-3 p-3 border rounded-xl bg-gray-50"
               value={password}
-              onChange={e => setPassword(e.target.value)}
+              onChange={(e) => setPassword(e.target.value)}
             />
           </div>
           <input
@@ -96,14 +93,14 @@ const NewPassword = () => {
           />
         </form>
       ) : null}
-        {passwordModified && (
-          <Link
+      {passwordModified && (
+        <Link
           className="block text-center my-5 text-slate-500 uppercase text-sm"
           to="/"
         >
           Íniciar Sessão
         </Link>
-        )}
+      )}
     </>
   );
 };

@@ -46,7 +46,7 @@ export const emailForgotThePassword = async (datas) => {
     html: `
         <p>Olá ${name} Solicitou recuperação de sua senha</p>
         <p>Siga o seguinte link para recuperar e gerar uma nova senha:</p>
-            <a href="${process.env.FRONTEND_URL}recuperar-senha/${token}">Restabelecendo senha</a>
+            <a href="${process.env.FRONTEND_URL}/recuperar-senha/${token}">Recuperando a senha</a>
         <p>Se você não solicitou esse e-mail, pode ignorar a mensagem.</p>
     `,
   });

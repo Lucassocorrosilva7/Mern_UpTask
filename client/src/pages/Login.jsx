@@ -8,7 +8,7 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [alert, setAlert] = useState({});
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if ([email, password].includes("")) {
@@ -20,9 +20,17 @@ const Login = () => {
     }
 
     try {
-      
+      const { data } = await clientAxios.post("/users/login", {
+        email,
+        password,
+      });
+      setAlert;
+      localStorage.setItem("token", data.token);
     } catch (error) {
-      console.log(error)
+      setAlert({
+        msg: error.response.data.msg,
+        error: true,
+      });
     }
   };
 

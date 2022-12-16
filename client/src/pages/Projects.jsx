@@ -1,14 +1,29 @@
-import React from 'react'
+import PreviewProject from "../components/PreviewProject";
+import useProjects from "../hooks/useProjects"
 
 const Projects = () => {
-  return (
-   <>
-    <h1 className='text-4xl font-black'>Projetos</h1>
-   <div>
-    
-   </div>
-   </>
-  )
-}
 
-export default Projects
+  const { projects } = useProjects();
+  
+
+  console.log(projects)
+  
+  return (
+    <>
+      <h1 className="text-4xl font-black">Projetos</h1>
+      <div className="bg-white shadow mt-10 rounded-lg">
+        {projects.length ? (
+         
+            projects.map(project => (
+              <PreviewProject 
+                key={project._id}
+                project={project}
+              />
+            ))
+        ) : <p className="text-center text-gray-600 uppercase p-5">sem projetos</p>}
+      </div>
+    </>
+  );
+};
+
+export default Projects;

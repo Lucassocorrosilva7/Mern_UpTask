@@ -5,6 +5,7 @@ import NewPassword from "./NewPassword";
 import RecoverPassword from "./RecoverPassword";
 import Projects from "./Projects";
 import NewProject from "./NewProject";
+import Project from "./Project";
 
 export {
   Login,
@@ -13,5 +14,6 @@ export {
   NewPassword,
   RecoverPassword,
   Projects,
-  NewProject
+  NewProject,
+  Project
 };

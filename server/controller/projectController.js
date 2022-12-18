@@ -34,11 +34,7 @@ const obterProject = async (req, res) => {
       return res.status(401).json({ msg: error.message });
     }
 
-    const tasks = await Tasks.find().where("project").equals(project._id);
-    res.json({
-      project,
-      tasks,
-    });
+    res.json(project);
   } else {
     const error = new Error("Id inválido");
     return res.status(404).json({ msg: error.message });
@@ -103,7 +99,6 @@ const deleteProject = async (req, res) => {
 const addCollaborator = async (req, res) => {};
 
 const deleteCollaborator = async (req, res) => {};
-
 
 export {
   obterProjects,

@@ -6,6 +6,7 @@ import RecoverPassword from "./RecoverPassword";
 import Projects from "./Projects";
 import NewProject from "./NewProject";
 import Project from "./Project";
+import EditProject from "./EditProject";
 
 export {
   Login,
@@ -15,5 +16,6 @@ export {
   RecoverPassword,
   Projects,
   NewProject,
-  Project
+  Project,
+  EditProject
 };

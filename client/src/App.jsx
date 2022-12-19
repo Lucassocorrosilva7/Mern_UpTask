@@ -9,7 +9,8 @@ import {
   RecoverPassword,
   Projects,
   NewProject,
-  Project
+  Project,
+  EditProject
 } from "./pages";
 import { AuthProvider } from "./context/AuthProvider";
 import { ProjectsProvider } from "./context/ProjectsProvider";
@@ -31,6 +32,7 @@ function App() {
               <Route index element={<Projects />} />
               <Route path="criar-projeto" element={<NewProject />} />
               <Route path=":id" element={<Project />} />
+              <Route path="editar/:id" element={<EditProject />} />
             </Route>
           </Routes>
         </ProjectsProvider>

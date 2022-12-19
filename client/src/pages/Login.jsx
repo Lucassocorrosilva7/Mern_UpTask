@@ -43,7 +43,7 @@ const Login = () => {
   return (
     <>
       <h1 className="text-sky-600 font-black text-6xl capitalize text-center">
-        Íniciar seção
+        Iníciar seção
       </h1>
 
       {msg && <Alert alert={alert} />}

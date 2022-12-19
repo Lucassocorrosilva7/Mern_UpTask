@@ -1,21 +1,34 @@
 import { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import clientAxios from "../config/clientAxios";
 import useProjects from "../hooks/useProjects";
 import Alert from "./Alert";
 
 const FormProject = () => {
+  const [id, setId] = useState(null);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [deliveryDate, setDeliveryDate] = useState("");
   const [client, setClient] = useState("");
 
-  const { showAlert, alert, submitProject } = useProjects();
+  const params = useParams();
+
+  const { showAlert, alert, submitProject, project } = useProjects();
+
+  useEffect(() => {
+    if (params.id) {
+      setId(project._id);
+      setName(project.name);
+      setDescription(project.description);
+      setDeliveryDate(project.deliveryDate?.split("T")[0]);
+      setClient(project.client);
+    }
+  }, [params]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     if ([name, description, deliveryDate, client].includes("")) {
-
       showAlert({
         msg: "Todos os campos são obrigatorios",
         error: true,
@@ -23,12 +36,12 @@ const FormProject = () => {
       return;
     }
 
-    await submitProject({name,description,deliveryDate,client,});
-    setName('')
-    setDescription('')
-    setDeliveryDate('')
-    setClient('')
-
+    await submitProject({ id, name, description, deliveryDate, client });
+    setId(null);
+    setName("");
+    setDescription("");
+    setDeliveryDate("");
+    setClient("");
   };
 
   const { msg } = alert;
@@ -103,7 +116,7 @@ const FormProject = () => {
       </div>
       <input
         type="submit"
-        value="Criar Projeto"
+        value={id ? "Atualizar Projeto" : "Cadastrar Projeto"}
         className="bg-sky-600 w-full p-3 uppercase font-bold text-white rounded cursor-pointer hover:bg-sky-700 transition-colors"
       />
     </form>

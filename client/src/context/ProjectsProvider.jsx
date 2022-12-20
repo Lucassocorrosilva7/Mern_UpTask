@@ -123,13 +123,42 @@ const ProjectsProvider = ({ children }) => {
           Authorization: `Bearer ${token}`,
         },
       };
-
       const { data } = await clientAxios(`/projects/${id}`, config);
       setProject(data);
     } catch (error) {
       console.log(error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const deleteProject = async (id) => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) return;
+      const config = {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      };
+      const { data } = await clientAxios.delete(`/projects/${id}`, config);
+      const projectUpdate = projects.filter(
+        (projectState) => projectState._id !== id
+      );
+      setProjects(projectUpdate);
+
+      setAlert({
+        msg: data.msg,
+        error: false,
+      });
+
+      setTimeout(() => {
+        setAlert({});
+        navigate("/projetos");
+      }, 3000);
+    } catch (error) {
+      console.log(error);
     }
   };
 
@@ -143,6 +172,7 @@ const ProjectsProvider = ({ children }) => {
         obterProject,
         project,
         loading,
+        deleteProject,
       }}
     >
       {children}

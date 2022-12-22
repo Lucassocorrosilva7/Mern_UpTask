@@ -1,18 +1,36 @@
 import { Fragment, useState, useEffect } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import useProjects from "../hooks/useProjects";
+import Alert from "../components/Alert";
+import { useParams } from 'react-router-dom'
+
+const PROPERTY = ["low", "medium", "high"];
 
 const ModalForm = () => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
+  const [property, setProperty] = useState("");
   const [deliveryDate, setDeliveryDate] = useState("");
-  const [client, setClient] = useState("");
 
-  const { modalFormTask, handleModalTask } = useProjects();
+  const { modalFormTask, handleModalTask, showAlert, alert, submitTask } =
+    useProjects();
 
-    const handleSubmit = e => {
-        e.preventDefault();
+  const params = useParams();
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if ([name, description, deliveryDate, property].includes("")) {
+      showAlert({
+        msg: "Todos os campos são obrigatórios",
+        error: true,
+      });
+      return;
     }
+
+    submitTask({ name, description, deliveryDate, property, project: params.id });
+  };
+
+  const { msg } = alert;
 
   return (
     <Transition.Root show={modalFormTask} as={Fragment}>
@@ -80,40 +98,81 @@ const ModalForm = () => {
                   >
                     Criar Tarefa
                   </Dialog.Title>
-                    <form onSubmit={handleSubmit} className="my-10">
-                        <div className="mb-5">
-                            <label htmlFor="name" className="text-gray-700 uppercase font-bold text-sm">Nome Tarefa</label>
-                            <input 
-                                type="text"
-                                id="name"
-                                placeholder="Nome Tarefa"
-                                className="border-2 w-full p-2 mt-2 placeholder-gray-400 rounded-md"
-                                value={name} 
-                                onChange={e => setName(e.target.value)}
-                            />
-                        </div>
-                        <div className="mb-5">
-                            <label htmlFor="description" className="text-gray-700 uppercase font-bold text-sm">Descrição da Tarefa</label>
-                            <textarea 
-                                id="description"
-                                placeholder="Descrição da Tarefa"
-                                className="border-2 w-full p-2 mt-2 placeholder-gray-400 rounded-md"
-                                value={description} 
-                                onChange={e => setDescription(e.target.value)}
-                            />
-                        </div>
-                          <div className="mb-5">
-                            <label htmlFor="name" className="text-gray-700 uppercase font-bold text-sm">Nome Tarefa</label>
-                            <input 
-                                type="text"
-                                id="name"
-                                placeholder="Nome Tarefa"
-                                className="border-2 w-full p-2 mt-2 placeholder-gray-400 rounded-md"
-                                value={name} 
-                                onChange={e => setName(e.target.value)}
-                            />
-                        </div>
-                    </form>
+
+                  {msg && <Alert alert={alert} />}
+
+                  <form onSubmit={handleSubmit} className="my-10">
+                    <div className="mb-5">
+                      <label
+                        htmlFor="name"
+                        className="text-gray-700 uppercase font-bold text-sm"
+                      >
+                        Nome Tarefa
+                      </label>
+                      <input
+                        type="text"
+                        id="name"
+                        placeholder="Nome Tarefa"
+                        className="border-2 w-full p-2 mt-2 placeholder-gray-400 rounded-md"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                      />
+                    </div>
+                    <div className="mb-5">
+                      <label
+                        htmlFor="description"
+                        className="text-gray-700 uppercase font-bold text-sm"
+                      >
+                        Descrição da Tarefa
+                      </label>
+                      <textarea
+                        id="description"
+                        placeholder="Descrição da Tarefa"
+                        className="border-2 w-full p-2 mt-2 placeholder-gray-400 rounded-md"
+                        value={description}
+                        onChange={(e) => setDescription(e.target.value)}
+                      />
+                    </div>
+                    <div className="mb-5">
+                      <label
+                        htmlFor="delivery-date"
+                        className="text-gray-700 uppercase font-bold text-sm"
+                      >
+                        Data de entrega
+                      </label>
+                      <input
+                        type="date"
+                        id="delivery-date"
+                        className="border-2 w-full p-2 mt-2 placeholder-gray-400 rounded-md"
+                        value={deliveryDate}
+                        onChange={(e) => setDeliveryDate(e.target.value)}
+                      />
+                    </div>
+                    <div className="mb-5">
+                      <label
+                        htmlFor="name"
+                        className="text-gray-700 uppercase font-bold text-sm"
+                      >
+                        Selecionar Nível
+                      </label>
+                      <select
+                        id="property"
+                        className="border-2 w-full p-2 mt-2 placeholder-gray-400 rounded-md"
+                        value={property}
+                        onChange={(e) => setProperty(e.target.value)}
+                      >
+                        <option value="">-- Selecionar --</option>
+                        {PROPERTY.map((options) => (
+                          <option key={options}>{options}</option>
+                        ))}
+                      </select>
+                    </div>
+                    <input
+                      type="submit"
+                      value="Criar Tarefa"
+                      className="bg-sky-600 hover:bg-sky-700 transition-colors w-full py-3 rounded uppercase font-bold text-white text-sm cursor-pointer"
+                    />
+                  </form>
                 </div>
               </div>
             </div>

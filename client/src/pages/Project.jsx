@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import useProjects from "../hooks/useProjects";
 import { useParams, Link } from "react-router-dom";
 import ModalForm from "../components/ModalForm";
+import Task from "../components/Task";
 
 const Project = ({ id }) => {
   const params = useParams();
@@ -14,6 +15,8 @@ const Project = ({ id }) => {
   }, []);
 
   const { name } = project;
+
+  console.log(project)
 
   if (loading) return "Carregando...";
 
@@ -67,6 +70,14 @@ const Project = ({ id }) => {
         </svg>
         Nova Tarefa
       </button>
+      <p className="font-bold text-xl mt-10">Tarefas de projetos</p>
+      <div className="bg-white shawdom mt-10 rounded-lg">
+        {project.tasks?.length ? 
+        project.tasks?.map(task => (
+          <Task key={task._id} task={task}/>
+        )) : 
+        <p className="text-center my-5 p-10">Não há tarefas neste projeto.</p>}
+      </div>
       <ModalForm modal={modal} setModal={setModal} />
     </>
   );

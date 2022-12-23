@@ -2,7 +2,7 @@ import Project from "../models/Project.js";
 import Tasks from "../models/Tasks.js";
 
 const obterProjects = async (req, res) => {
-  const projects = await Project.find().where("created").equals(req.user);
+  const projects = await Project.find().where("created").equals(req.user).select('-tasks');
   res.json(projects);
 };
 
@@ -22,7 +22,7 @@ const obterProject = async (req, res) => {
   const { id } = req.params;
 
   if (id.match(/^[0-9a-fA-F]{24}$/)) {
-    const project = await Project.findById(id.trim());
+    const project = await Project.findById(id.trim()).populate('tasks');
 
     if (!project) {
       const error = new Error("Projeto não existe");

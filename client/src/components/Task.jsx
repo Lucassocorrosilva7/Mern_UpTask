@@ -1,3 +1,5 @@
+import { format } from "../helpers/Format";
+
 const Task = ({ task }) => {
   const { description, name, property, deliveryDate, state, _id } = task;
 
@@ -6,7 +8,7 @@ const Task = ({ task }) => {
       <div>
         <p className="mb-1 text-xl">{name}</p>
         <p className="mb-1 text-sm text-gray-500 uppercase">{description}</p>
-        <p className="mb-1 text-xl">{deliveryDate}</p>
+        <p className="mb-1 text-xl">{format(deliveryDate)}</p>
         <p className="mb-1 text-gray-600">Propriedade: {property}</p>
       </div>
 

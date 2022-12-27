@@ -1,14 +1,13 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import useProjects from "../hooks/useProjects";
 import { useParams, Link } from "react-router-dom";
 import ModalForm from "../components/ModalForm";
 import Task from "../components/Task";
 
-const Project = ({ id }) => {
+const Project = () => {
   const params = useParams();
 
   const { obterProject, project, loading, handleModalTask } = useProjects();
-  const [modal, setModal] = useState(false);
 
   useEffect(() => {
     obterProject(params.id);
@@ -16,7 +15,6 @@ const Project = ({ id }) => {
 
   const { name } = project;
 
-  console.log(project)
 
   if (loading) return "Carregando...";
 
@@ -78,7 +76,7 @@ const Project = ({ id }) => {
         )) : 
         <p className="text-center my-5 p-10">Não há tarefas neste projeto.</p>}
       </div>
-      <ModalForm modal={modal} setModal={setModal} />
+      <ModalForm/>
     </>
   );
 };

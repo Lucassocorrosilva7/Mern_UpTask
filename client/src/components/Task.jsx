@@ -1,6 +1,10 @@
 import { format } from "../helpers/Format";
+import useProjects from "../hooks/useProjects";
 
 const Task = ({ task }) => {
+
+  const { handleModalEditTask } = useProjects();
+
   const { description, name, property, deliveryDate, state, _id } = task;
 
   return (
@@ -13,7 +17,9 @@ const Task = ({ task }) => {
       </div>
 
       <div className="flex gap-2">
-        <button className="bg-indigo-600 px-4 py-3 text-white uppercase font-bold text-sm rounded-lg">
+        <button className="bg-indigo-600 px-4 py-3 text-white uppercase font-bold text-sm rounded-lg"
+          onClick={() => handleModalEditTask(task)}
+        >
           Editar
         </button>
         {state ? (

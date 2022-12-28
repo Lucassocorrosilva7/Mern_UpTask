@@ -3,7 +3,6 @@ import { Dialog, Transition } from "@headlessui/react";
 import useProjects from "../hooks/useProjects";
 import Alert from "../components/Alert";
 import { useParams } from "react-router-dom";
-import clientAxios from "../config/clientAxios";
 
 const PROPERTY = ["low", "medium", "high"];
 
@@ -14,13 +13,13 @@ const ModalForm = () => {
   const [property, setProperty] = useState("");
   const [deliveryDate, setDeliveryDate] = useState("");
 
-  const { modalFormTask, handleModalTask, showAlert, alert, submitTask, task } =
-    useProjects();
+  const { modalFormTask, handleModalTask, showAlert, alert, submitTask, task } = useProjects();
 
   const params = useParams();
 
   useEffect(() => {
     const { _id, name, description, deliveryDate, property } = task;
+
     if (task?._id) {
       setId(_id);
       setName(name);

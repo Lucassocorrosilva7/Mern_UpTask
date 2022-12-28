@@ -11,6 +11,7 @@ const ProjectsProvider = ({ children }) => {
   const [loading, setLoading] = useState(false);
   const [modalFormTask, setModalFormTask] = useState(false);
   const [task, setTask] = useState({});
+  const [modalDeleteTask, setModalDeleteTask] = useState(false);
 
   const navigate = useNavigate();
 
@@ -175,27 +176,31 @@ const ProjectsProvider = ({ children }) => {
     } else {
       await createdTask(task);
     }
+  };
 
-    const createdTask = async (task) => {
-      try {
-        const token = localStorage.getItem("token");
-        if (!token) return;
-        const config = {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        };
-        const { data } = await clientAxios.post("/tasks", task, config);
-        const projectUpdate = { ...project };
-        projectUpdate.tasks = [...project.tasks, data];
-        setProject(projectUpdate);
-        setAlert({});
-        setModalFormTask(false);
-      } catch (error) {
-        console.log(error);
-      }
-    };
+  const createdTask = async (task) => {
+    try {
+      const token = localStorage.getItem("token");
+
+      if (!token) return;
+
+      const config = {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      };
+
+      const { data } = await clientAxios.post("/tasks", task, config);
+
+      const projectUpdate = { ...project };
+      projectUpdate.tasks = [...project.tasks, data];
+      setProject(projectUpdate);
+      setAlert({});
+      setModalFormTask(false);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const toEditTask = async (task) => {
@@ -221,9 +226,46 @@ const ProjectsProvider = ({ children }) => {
     }
   };
 
-  const handleModalEditTask = async (task) => {
+  const handleModalEditTask = (task) => {
     setTask(task);
     setModalFormTask(true);
+  };
+
+  const deleteTask = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) return;
+
+      const config = {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      };
+
+      const { data } = await clientAxios.delete(`/tasks/${task._id}`, config);
+      setAlert({
+        msg: data.msg,
+        error: false,
+      });
+      const projectUpdate = { ...project };
+      projectUpdate.tasks = projectUpdate.tasks.filter(
+        (taskState) => taskState._id !== task._id
+      );
+      setProject(projectUpdate);
+      setModalDeleteTask(false);
+      setTask({});
+      setTimeout(() => {
+        setAlert({});
+      }, 3000)
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleModalDelete = (task) => {
+    setTask(task);
+    setModalDeleteTask(!modalDeleteTask);
   };
 
   return (
@@ -242,6 +284,9 @@ const ProjectsProvider = ({ children }) => {
         submitTask,
         handleModalEditTask,
         task,
+        modalDeleteTask,
+        handleModalDelete,
+        deleteTask,
       }}
     >
       {children}

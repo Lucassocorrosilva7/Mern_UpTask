@@ -2,12 +2,14 @@ import { useEffect } from "react";
 import useProjects from "../hooks/useProjects";
 import { useParams, Link } from "react-router-dom";
 import ModalForm from "../components/ModalForm";
+import ModalDeleteTask from "../components/ModalDeleteTask";
 import Task from "../components/Task";
+import Alert from "../components/Alert";
 
 const Project = () => {
   const params = useParams();
 
-  const { obterProject, project, loading, handleModalTask } = useProjects();
+  const { obterProject, project, loading, handleModalTask, alert } = useProjects();
 
   useEffect(() => {
     obterProject(params.id);
@@ -17,6 +19,8 @@ const Project = () => {
 
 
   if (loading) return "Carregando...";
+
+  const { msg } = alert;
 
   return (
     <>
@@ -69,6 +73,13 @@ const Project = () => {
         Nova Tarefa
       </button>
       <p className="font-bold text-xl mt-10">Tarefas de projetos</p>
+
+    <div className="flex justify-center">
+      <div className="w-full md:w-1/3 lg:w-1/4">
+      {msg && <Alert alert={alert} />}
+      </div>
+    </div>
+
       <div className="bg-white shawdom mt-10 rounded-lg">
         {project.tasks?.length ? 
         project.tasks?.map(task => (
@@ -77,6 +88,7 @@ const Project = () => {
         <p className="text-center my-5 p-10">Não há tarefas neste projeto.</p>}
       </div>
       <ModalForm/>
+      <ModalDeleteTask/>
     </>
   );
 };

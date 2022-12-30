@@ -12,6 +12,7 @@ const ProjectsProvider = ({ children }) => {
   const [modalFormTask, setModalFormTask] = useState(false);
   const [task, setTask] = useState({});
   const [modalDeleteTask, setModalDeleteTask] = useState(false);
+  const [modalDeleteContributor, setModalDeleteContributor] = useState(false);
   const [contributor, setContributor] = useState({});
 
   const navigate = useNavigate();
@@ -132,8 +133,8 @@ const ProjectsProvider = ({ children }) => {
     } catch (error) {
       setAlert({
         msg: error.response.data.msg,
-        error: true
-      })
+        error: true,
+      });
     } finally {
       setLoading(false);
     }
@@ -312,21 +313,68 @@ const ProjectsProvider = ({ children }) => {
         },
       };
 
-      const { data } = await clientAxios.post(`/projects/contributors/${project._id}`, email, config);
+      const { data } = await clientAxios.post(
+        `/projects/contributors/${project._id}`,
+        email,
+        config
+      );
 
       setAlert({
         msg: data.msg,
-        error: false
-      })
-      setContributor({})
-      setAlert({})
-      console.log(data)
+        error: false,
+      });
+
+      setContributor({});
     } catch (error) {
       setAlert({
         msg: error.response.data.msg,
-        error: true
-      })
-    } 
+        error: true,
+      });
+    }
+  };
+
+  const handleModalDeleteContributor = (contributor) => {
+    setModalDeleteContributor(!modalDeleteContributor);
+    setContributor(contributor);
+  };
+
+  const deleteContributor = async () => {
+    try {
+      const token = localStorage.getItem("token");
+
+      if (!token) return;
+
+      const config = {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      };
+
+      const { data } = await clientAxios.post(
+        `/projects/delete-contributor/${project._id}`,
+        { id: contributor._id },
+        config
+      );
+
+      const projectUpdate = { ...project };
+
+      projectUpdate.collaborators = projectUpdate.collaborators.filter(
+        (contributorState) => contributorState._id !== contributor._id
+      );
+
+      setProject(projectUpdate);
+
+      setAlert({
+        msg: data.msg,
+        error: false,
+      });
+
+      setContributor({});
+      setModalDeleteContributor(false);
+    } catch (error) {
+      console.log(error.response);
+    }
   };
 
   return (
@@ -351,6 +399,9 @@ const ProjectsProvider = ({ children }) => {
         submitContributor,
         contributor,
         addContributor,
+        handleModalDeleteContributor,
+        modalDeleteContributor,
+        deleteContributor,
       }}
     >
       {children}

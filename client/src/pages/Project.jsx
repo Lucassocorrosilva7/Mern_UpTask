@@ -5,11 +5,14 @@ import ModalForm from "../components/ModalForm";
 import ModalDeleteTask from "../components/ModalDeleteTask";
 import Task from "../components/Task";
 import Alert from "../components/Alert";
+import Contributor from "../components/Contributor";
+import ModalDeleteContributor from "../components/ModalDeleteContributor";
 
 const Project = () => {
   const params = useParams();
 
-  const { obterProject, project, loading, handleModalTask, alert } = useProjects();
+  const { obterProject, project, loading, handleModalTask, alert  } =
+    useProjects();
 
   useEffect(() => {
     obterProject(params.id);
@@ -74,21 +77,43 @@ const Project = () => {
       </button>
       <p className="font-bold text-xl mt-10">Tarefas de projetos</p>
 
-    <div className="flex justify-center">
-      <div className="w-full md:w-1/3 lg:w-1/4">
-      {msg && <Alert alert={alert} />}
+      <div className="flex justify-center">
+        <div className="w-full md:w-1/3 lg:w-1/4">
+          {msg && <Alert alert={alert} />}
+        </div>
       </div>
-    </div>
 
       <div className="bg-white shawdom mt-10 rounded-lg">
-        {project.tasks?.length ? 
-        project.tasks?.map(task => (
-          <Task key={task._id} task={task}/>
-        )) : 
-        <p className="text-center my-5 p-10">Não há tarefas neste projeto.</p>}
+        {project.tasks?.length ? (
+          project.tasks?.map((task) => <Task key={task._id} task={task} />)
+        ) : (
+          <p className="text-center my-5 p-10">Não há tarefas neste projeto.</p>
+        )}
       </div>
-      <ModalForm/>
-      <ModalDeleteTask/>
+
+      <div className="flex items-center justify-between mt-10">
+        <p className="font-bold text-xl">Colaboradores</p>
+        <Link
+          className="text-gray-400 hover:text-gray-500 transition-colors uppercase font-bold"
+          to={`/projetos/novo-colaborador/${project._id}`}
+        >
+          Adicionar
+        </Link>
+      </div>
+
+      <div className="bg-white shawdom mt-10 rounded-lg">
+        {project.collaborators?.length ? (
+          project.collaborators?.map((contributor) => (
+            <Contributor key={contributor._id} contributor={contributor} />
+          ))
+        ) : (
+          <p className="text-center my-5 p-10">Não há colaboradores neste projeto.</p>
+        )}
+      </div>
+
+      <ModalForm />
+      <ModalDeleteTask />
+      <ModalDeleteContributor/>
     </>
   );
 };

@@ -12,6 +12,7 @@ const ProjectsProvider = ({ children }) => {
   const [modalFormTask, setModalFormTask] = useState(false);
   const [task, setTask] = useState({});
   const [modalDeleteTask, setModalDeleteTask] = useState(false);
+  const [contributor, setContributor] = useState({});
 
   const navigate = useNavigate();
 
@@ -129,7 +130,10 @@ const ProjectsProvider = ({ children }) => {
       const { data } = await clientAxios(`/projects/${id}`, config);
       setProject(data);
     } catch (error) {
-      console.log(error);
+      setAlert({
+        msg: error.response.data.msg,
+        error: true
+      })
     } finally {
       setLoading(false);
     }
@@ -257,7 +261,7 @@ const ProjectsProvider = ({ children }) => {
       setTask({});
       setTimeout(() => {
         setAlert({});
-      }, 3000)
+      }, 3000);
     } catch (error) {
       console.log(error);
     }
@@ -266,6 +270,63 @@ const ProjectsProvider = ({ children }) => {
   const handleModalDelete = (task) => {
     setTask(task);
     setModalDeleteTask(!modalDeleteTask);
+  };
+
+  const submitContributor = async (email) => {
+    setLoading(true);
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) return;
+      const config = {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      };
+      const { data } = await clientAxios.post(
+        "/projects/contributors",
+        { email },
+        config
+      );
+      setContributor(data);
+      setAlert({});
+    } catch (error) {
+      setAlert({
+        msg: error.response.data.msg,
+        error: true,
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const addContributor = async (email) => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) return;
+
+      const config = {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      };
+
+      const { data } = await clientAxios.post(`/projects/contributors/${project._id}`, email, config);
+
+      setAlert({
+        msg: data.msg,
+        error: false
+      })
+      setContributor({})
+      setAlert({})
+      console.log(data)
+    } catch (error) {
+      setAlert({
+        msg: error.response.data.msg,
+        error: true
+      })
+    } 
   };
 
   return (
@@ -287,6 +348,9 @@ const ProjectsProvider = ({ children }) => {
         modalDeleteTask,
         handleModalDelete,
         deleteTask,
+        submitContributor,
+        contributor,
+        addContributor,
       }}
     >
       {children}

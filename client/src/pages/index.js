@@ -7,6 +7,7 @@ import Projects from "./Projects";
 import NewProject from "./NewProject";
 import Project from "./Project";
 import EditProject from "./EditProject";
+import NewContributor from "./NewContributor";
 
 export {
   Login,
@@ -17,5 +18,6 @@ export {
   Projects,
   NewProject,
   Project,
-  EditProject
+  EditProject,
+  NewContributor
 };

@@ -10,7 +10,8 @@ import {
   Projects,
   NewProject,
   Project,
-  EditProject
+  EditProject,
+  NewContributor
 } from "./pages";
 import { AuthProvider } from "./context/AuthProvider";
 import { ProjectsProvider } from "./context/ProjectsProvider";
@@ -31,6 +32,7 @@ function App() {
             <Route path="/projetos" element={<RouteProtected />}>
               <Route index element={<Projects />} />
               <Route path="criar-projeto" element={<NewProject />} />
+              <Route path="novo-colaborador/:id" element={<NewContributor />} />
               <Route path=":id" element={<Project />} />
               <Route path="editar/:id" element={<EditProject />} />
             </Route>

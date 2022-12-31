@@ -130,6 +130,7 @@ const ProjectsProvider = ({ children }) => {
       };
       const { data } = await clientAxios(`/projects/${id}`, config);
       setProject(data);
+      setAlert({});
     } catch (error) {
       setAlert({
         msg: error.response.data.msg,
@@ -325,6 +326,10 @@ const ProjectsProvider = ({ children }) => {
       });
 
       setContributor({});
+
+      setTimeout(() => {
+        setAlert({});
+      }, 3000);
     } catch (error) {
       setAlert({
         msg: error.response.data.msg,
@@ -371,6 +376,11 @@ const ProjectsProvider = ({ children }) => {
       });
 
       setContributor({});
+
+      setTimeout(() => {
+        setAlert({});
+      }, 3000);
+
       setModalDeleteContributor(false);
     } catch (error) {
       console.log(error.response);

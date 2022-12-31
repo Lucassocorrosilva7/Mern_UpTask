@@ -11,7 +11,7 @@ import ModalDeleteContributor from "../components/ModalDeleteContributor";
 const Project = () => {
   const params = useParams();
 
-  const { obterProject, project, loading, handleModalTask, alert  } =
+  const { obterProject, project, loading, handleModalTask, alert } =
     useProjects();
 
   useEffect(() => {
@@ -20,12 +20,13 @@ const Project = () => {
 
   const { name } = project;
 
-
   if (loading) return "Carregando...";
 
   const { msg } = alert;
 
-  return (
+  return msg && alert.error ? (
+    <Alert alert={alert} />
+  ) : (
     <>
       <div className="flex justify-between items-center">
         <h1 className="font-black text-2xl md:text-4xl">{name}</h1>
@@ -107,13 +108,15 @@ const Project = () => {
             <Contributor key={contributor._id} contributor={contributor} />
           ))
         ) : (
-          <p className="text-center my-5 p-10">Não há colaboradores neste projeto.</p>
+          <p className="text-center my-5 p-10">
+            Não há colaboradores neste projeto.
+          </p>
         )}
       </div>
 
       <ModalForm />
       <ModalDeleteTask />
-      <ModalDeleteContributor/>
+      <ModalDeleteContributor />
     </>
   );
 };

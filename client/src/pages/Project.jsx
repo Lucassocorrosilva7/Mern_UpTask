@@ -27,9 +27,7 @@ const Project = () => {
 
   const { msg } = alert;
 
-  return msg && alert.error ? (
-    <Alert alert={alert} />
-  ) : (
+  return  (
     <>
       <div className="flex justify-between items-center">
         <h1 className="font-black text-2xl md:text-4xl">{name}</h1>
@@ -87,11 +85,7 @@ const Project = () => {
 
       <p className="font-bold text-xl mt-10">Tarefas de projetos</p>
 
-      <div className="flex justify-center">
-        <div className="w-full md:w-1/3 lg:w-1/4">
-          {msg && <Alert alert={alert} />}
-        </div>
-      </div>
+    
 
       <div className="bg-white shawdom mt-10 rounded-lg">
         {project.tasks?.length ? (

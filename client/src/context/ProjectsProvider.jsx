@@ -11,9 +11,10 @@ const ProjectsProvider = ({ children }) => {
   const [loading, setLoading] = useState(false);
   const [modalFormTask, setModalFormTask] = useState(false);
   const [task, setTask] = useState({});
+  const [contributor, setContributor] = useState({});
   const [modalDeleteTask, setModalDeleteTask] = useState(false);
   const [modalDeleteContributor, setModalDeleteContributor] = useState(false);
-  const [contributor, setContributor] = useState({});
+  const [search, setSearch] = useState(false);
 
   const navigate = useNavigate();
 
@@ -132,14 +133,14 @@ const ProjectsProvider = ({ children }) => {
       setProject(data);
       setAlert({});
     } catch (error) {
-      navigate("/projetos")
+      navigate("/projetos");
       setAlert({
         msg: error.response.data.msg,
         error: true,
       });
       setTimeout(() => {
-        setAlert({})
-      }, 3000)
+        setAlert({});
+      }, 3000);
     } finally {
       setLoading(false);
     }
@@ -418,6 +419,10 @@ const ProjectsProvider = ({ children }) => {
     }
   };
 
+  const handleSearch = () => {
+    setSearch(!search);
+  };
+
   return (
     <ProjectsContext.Provider
       value={{
@@ -444,6 +449,8 @@ const ProjectsProvider = ({ children }) => {
         modalDeleteContributor,
         deleteContributor,
         completeTask,
+        search,
+        handleSearch,
       }}
     >
       {children}

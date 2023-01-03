@@ -4,16 +4,25 @@ import useProjects from "../hooks/useProjects";
 import ModalForm from "../components/ModalForm";
 import ModalDeleteTask from "../components/ModalDeleteTask";
 import Task from "../components/Task";
-import Alert from "../components/Alert";
 import Contributor from "../components/Contributor";
 import ModalDeleteContributor from "../components/ModalDeleteContributor";
 import useAdmin from "../hooks/useAdmin";
+import io from "socket.io-client";
+let socket;
 
 const Project = () => {
   const params = useParams();
 
-  const { obterProject, project, loading, handleModalTask, alert } =
-    useProjects();
+  const {
+    obterProject,
+    project,
+    loading,
+    handleModalTask,
+    alert,
+    submitTaskProject,
+    deleteTaskProject,
+    editTaskProject,
+  } = useProjects();
 
   const admin = useAdmin();
 
@@ -21,13 +30,38 @@ const Project = () => {
     obterProject(params.id);
   }, []);
 
+  useEffect(() => {
+    socket = io(import.meta.env.VITE_BACKEND_URL);
+    socket.emit("Abrir projeto", params.id);
+  }, []);
+
+  useEffect(() => {
+    socket.on("aggregate task", (newTask) => {
+      if (newTask.project === project._id) {
+        submitTaskProject(newTask);
+      }
+    });
+
+    socket.on("Deletar tarefa", (deleteTask) => {
+      if (deleteTask.project === project._id) {
+        deleteTaskProject(deleteTask);
+      }
+    });
+
+    socket.on("Editar tarefa", (editTask) => {
+      if (editTask.project === project._id) {
+        editTaskProject(editTask);
+      }
+    });
+  });
+
   const { name } = project;
 
   if (loading) return "Carregando...";
 
   const { msg } = alert;
 
-  return  (
+  return (
     <>
       <div className="flex justify-between items-center">
         <h1 className="font-black text-2xl md:text-4xl">{name}</h1>
@@ -84,8 +118,6 @@ const Project = () => {
       )}
 
       <p className="font-bold text-xl mt-10">Tarefas de projetos</p>
-
-    
 
       <div className="bg-white shawdom mt-10 rounded-lg">
         {project.tasks?.length ? (

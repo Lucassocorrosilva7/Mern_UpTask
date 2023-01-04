@@ -7,7 +7,6 @@ const AuthContext = createContext();
 const AuthProvider = ({ children }) => {
   const [auth, setAuth] = useState({});
   const [loading, SetLoading] = useState(true);
-  const navigate = useNavigate();
 
 
   useEffect(() => {
@@ -28,7 +27,6 @@ const AuthProvider = ({ children }) => {
       try {
         const { data } = await clientAxios("/users/perfil", config);
         setAuth(data);
-        // navigate('/projetos');
       } catch (error) {
         setAuth({});
       }
@@ -38,12 +36,17 @@ const AuthProvider = ({ children }) => {
     authenticationUser();
   }, []);
 
+  const logoutAuth = () => {
+    setAuth({});
+  }
+
   return (
     <AuthContext.Provider
       value={{
         auth,
         setAuth,
         loading,
+        logoutAuth
       }}
     >
       {children}

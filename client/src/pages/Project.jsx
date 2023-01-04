@@ -18,7 +18,6 @@ const Project = () => {
     project,
     loading,
     handleModalTask,
-    alert,
     submitTaskProject,
     deleteTaskProject,
     updateTaskProject,

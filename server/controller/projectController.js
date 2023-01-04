@@ -1,8 +1,10 @@
 import Project from "../models/Project.js";
-import Tasks from "../models/Tasks.js";
+import User from "../models/User.js";
 
 const obterProjects = async (req, res) => {
-  const projects = await Project.find().where("created").equals(req.user).select('-tasks');
+  const projects = await Project.find({
+    $or: [{ collaborators: { $in: req.user } }, { created: { $in: req.user } }],
+  }).select("-tasks");
   res.json(projects);
 };
 
@@ -22,21 +24,29 @@ const obterProject = async (req, res) => {
   const { id } = req.params;
 
   if (id.match(/^[0-9a-fA-F]{24}$/)) {
-    const project = await Project.findById(id.trim()).populate('tasks');
+    const project = await Project.findById(id.trim())
+      .populate({ path: "tasks", populate: { path: "complet", select: "name" } })
+      .populate("collaborators", "name email");
 
     if (!project) {
       const error = new Error("Projeto não existe");
       return res.status(404).json({ msg: error.message });
     }
 
-    if (project.created.toString() !== req.user._id.toString()) {
+    if (
+      project.created.toString() !== req.user._id.toString() &&
+      !project.collaborators.some(
+        (collaborator) =>
+          collaborator._id.toString() === req.user._id.toString()
+      )
+    ) {
       const error = new Error("Ação invalida");
       return res.status(401).json({ msg: error.message });
     }
 
     res.json(project);
   } else {
-    const error = new Error("Id inválido");
+    const error = new Error("Projeto não encontrado");
     return res.status(404).json({ msg: error.message });
   }
 };
@@ -91,14 +101,80 @@ const deleteProject = async (req, res) => {
       console.log(error);
     }
   } else {
-    const error = new Error("Id inválido");
+    const error = new Error("Projeto não encontrado");
     return res.status(404).json({ msg: error.message });
   }
 };
 
-const addCollaborator = async (req, res) => {};
+const searchCollaborator = async (req, res) => {
+  const { email } = req.body;
+  const user = await User.findOne({ email }).select(
+    "-confirm -createdAt -password -token -updatedAt -__v "
+  );
 
-const deleteCollaborator = async (req, res) => {};
+  if (!user) {
+    const error = new Error("Usúario não encontrado");
+    return res.status(404).json({ msg: error.message });
+  }
+
+  res.json(user);
+};
+
+const addCollaborator = async (req, res) => {
+  const project = await Project.findById(req.params.id);
+
+  if (!project) {
+    const error = new Error("Projeto não encontrado");
+    res.status(404).json({ msg: error.message });
+  }
+
+  if (project.created.toString() !== req.user._id.toString()) {
+    const error = new Error("Ação invalida");
+    res.status(404).json({ msg: error.message });
+  }
+
+  const { email } = req.body;
+  const user = await User.findOne({ email }).select(
+    "-confirm -createdAt -password -token -updatedAt -__v "
+  );
+
+  if (!user) {
+    const error = new Error("Usúario não encontrado");
+    return res.status(404).json({ msg: error.message });
+  }
+
+  if (project.created.toString() === user._id.toString()) {
+    const error = new Error("O criador do projeto não pode ser colaborador");
+    return res.status(404).json({ msg: error.message });
+  }
+
+  if (project.collaborators.includes(user._id)) {
+    const error = new Error("Esse usuário já pertence a um projeto");
+    return res.status(404).json({ msg: error.message });
+  }
+
+  project.collaborators.push(user._id);
+  await project.save();
+  res.json({ msg: "Colaborador adicionado" });
+};
+
+const deleteCollaborator = async (req, res) => {
+  const project = await Project.findById(req.params.id);
+
+  if (!project) {
+    const error = new Error("Projeto não encontrado");
+    res.status(404).json({ msg: error.message });
+  }
+
+  if (project.created.toString() !== req.user._id.toString()) {
+    const error = new Error("Ação invalida");
+    res.status(404).json({ msg: error.message });
+  }
+
+  project.collaborators.pull(req.body.id);
+  await project.save();
+  res.json({ msg: "Colaborador eliminado com sucesso" });
+};
 
 export {
   obterProjects,
@@ -106,6 +182,7 @@ export {
   obterProject,
   editProject,
   deleteProject,
+  searchCollaborator,
   addCollaborator,
   deleteCollaborator,
 };

@@ -32,6 +32,42 @@ app.use("/api/tasks", taskRoutes);
 
 const PORT = process.env.PORT || 4000;
 
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log(`Servido rodando na porta ${PORT}`);
+});
+
+import { Server } from "socket.io";
+const io = new Server(server, {
+  pingTimeout: 60000,
+  cors: {
+    origin: process.env.FRONTEND_URL,
+  },
+});
+
+io.on("connection", (socket) => {
+  console.log("conectado a socket.io");
+
+  socket.on("Abrir projeto", (project) => {
+    socket.join(project);
+  });
+
+  socket.on("new task", (task) => {
+    const project = task.project;
+    socket.to(project).emit("aggregate task", task);
+  });
+
+  socket.on("Deletar tarefa", (task) => {
+    const project = task.project;
+    socket.to(project).emit("Deletar tarefa", task);
+  });
+
+  socket.on("atualizar tarefa", (task) => {
+    const project = task.project._id;
+    socket.to(project).emit("tarefa atualizada", task);
+  });
+
+  socket.on("mudar estado", (task) => {
+    const project = task.project._id;
+    socket.to(project).emit("novo estado", task);
+  });
 });

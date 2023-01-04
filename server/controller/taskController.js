@@ -90,13 +90,44 @@ const deleteTask = async (req, res) => {
   }
 
   try {
-    await task.deleteOne();
+    const project = await Project.findById(task.project);
+    project.tasks.pull(task._id);
+    await Promise.allSettled([await project.save(), await task.deleteOne()]);
     res.json({ msg: "Tarefa Eliminada" });
   } catch (error) {
     console.log(error);
   }
 };
 
-const changeState = async (req, res) => {};
+const changeState = async (req, res) => {
+  const { id } = req.params;
+
+  const task = await Tasks.findById(id).populate("project");
+
+  if (!task) {
+    const error = new Error("Tarefa não encontrada");
+    return res.status(404).json({ msg: error.message });
+  }
+
+  if (
+    task.project.created.toString() !== req.user._id.toString() &&
+    !task.project.collaborators.some(
+      (collaborator) => collaborator._id.toString() === req.user._id.toString()
+    )
+  ) {
+    const error = new Error("Ação invalida");
+    return res.status(403).json({ msg: error.message });
+  }
+
+  task.state = !task.state;
+  task.complet = req.user._id;
+  await task.save();
+
+  const taskStored = await Tasks.findById(id)
+    .populate("project")
+    .populate("complet");
+
+  res.json(taskStored);
+};
 
 export { addTask, obterTask, updatedTask, deleteTask, changeState };

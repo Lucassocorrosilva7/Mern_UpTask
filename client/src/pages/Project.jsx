@@ -21,7 +21,8 @@ const Project = () => {
     alert,
     submitTaskProject,
     deleteTaskProject,
-    editTaskProject,
+    updateTaskProject,
+    changeTaskState,
   } = useProjects();
 
   const admin = useAdmin();
@@ -48,9 +49,15 @@ const Project = () => {
       }
     });
 
-    socket.on("Editar tarefa", (editTask) => {
-      if (editTask.project === project._id) {
-        editTaskProject(editTask);
+    socket.on("tarefa atualizada", (updateTask) => {
+      if (updateTask.project._id === project._id) {
+        updateTaskProject(updateTask);
+      }
+    });
+
+    socket.on("novo estado", (newTaskState) => {
+      if (newTaskState.project._id === project._id) {
+        changeTaskState(newTaskState);
       }
     });
   });
@@ -58,8 +65,6 @@ const Project = () => {
   const { name } = project;
 
   if (loading) return "Carregando...";
-
-  const { msg } = alert;
 
   return (
     <>

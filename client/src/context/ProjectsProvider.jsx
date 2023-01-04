@@ -232,9 +232,10 @@ const ProjectsProvider = ({ children }) => {
       };
       const { data } = await clientAxios.put(`/tasks/${task.id}`, task, config);
 
-      setProject(projectUpdate);
       setAlert({});
       setModalFormTask(false);
+
+      socket.emit("atualizar tarefa", data);
     } catch (error) {
       console.log(error);
     }
@@ -409,12 +410,8 @@ const ProjectsProvider = ({ children }) => {
 
       const { data } = await clientAxios.post(`/tasks/state/${id}`, {}, config);
 
-      const projectUpdate = { ...project };
+      socket.emit("mudar estado", data);
 
-      projectUpdate.tasks = projectUpdate.tasks.map((taskState) =>
-        taskState._id === data._id ? data : taskState
-      );
-      setProject(projectUpdate);
       setTask({});
       setAlert({});
     } catch (error) {
@@ -440,11 +437,20 @@ const ProjectsProvider = ({ children }) => {
     setProject(projectUpdate);
   };
 
-  const editTaskProject = (task) => {
+  const updateTaskProject = (task) => {
     const projectUpdate = { ...project };
     projectUpdate.tasks = projectUpdate.tasks.map((taskState) =>
-      taskState._id && data ? data : taskState
+      taskState._id === task._id ? task : taskState
     );
+    setProject(projectUpdate);
+  };
+
+  const changeTaskState = (task) => {
+    const projectUpdate = { ...project };
+    projectUpdate.tasks = projectUpdate.tasks.map((taskState) =>
+      taskState._id === task._id ? task : taskState
+    );
+    setProject(projectUpdate);
   };
 
   return (
@@ -477,7 +483,8 @@ const ProjectsProvider = ({ children }) => {
         handleSearch,
         submitTaskProject,
         deleteTaskProject,
-        editTaskProject
+        updateTaskProject,
+        changeTaskState,
       }}
     >
       {children}

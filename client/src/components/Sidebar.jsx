@@ -17,7 +17,7 @@ const Sidebar = () => {
   return (
     <aside className="md:w-1/3  xl:w-1/6 px-5 py-10 bg-sky-700">
       <p className="md:text-base p-2 text-white lg:text-xl font-bold">Olá: {name}</p>
-      <div className="flex  flex-col justify-items-end ">
+      <div className="flex flex-col items-start md:items-stretch content-between">
      <div>
          <Link
         to="criar-projeto"
@@ -64,7 +64,7 @@ const Sidebar = () => {
      <div>
        <button
         type="button"
-        className="flex w-full items-center p-2 text-base font-bold text-white rounded-lg dark:text-white md:hover:bg-sky-400 dark:hover:bg-gray-700"
+        className="flex w-full items-center p-2 text-base font-bold text-white rounded-lg dark:text-white md:hover:bg-red-500 dark:hover:bg-gray-700"
         onClick={Handlelogout}
       >
         <svg

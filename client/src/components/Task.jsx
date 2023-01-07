@@ -21,7 +21,7 @@ const Task = ({ task }) => {
         <p className="mb-1 text-xl">{name}</p>
         <p className="mb-1 text-sm text-gray-500 uppercase">{description}</p>
         <p className="mb-1 text-xl">{format(deliveryDate)}</p>
-        <p className="mb-1 text-gray-600">Propriedade: {property}</p>
+        <p className="mb-5 text-gray-600">Propriedade: {property}</p>
         {state && <p className="text-xs bg-green-600 uppercase p-1.5 rounded text-white">Completada por: {task.complet.name}</p>}
       </div>
 

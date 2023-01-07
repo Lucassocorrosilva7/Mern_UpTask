@@ -2,7 +2,7 @@
 
 ## Em desenvolvimento...⚡
 
-## Links do projeto disponível 👇🏻
+## Links disponíveis 👇🏻
 
 [Front-End](https://uptask-lucassocorrosilva7.vercel.app/)
 

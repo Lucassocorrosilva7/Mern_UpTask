@@ -4,7 +4,7 @@
 
 ## Links disponíveis 👇🏻
 
-[Front-End](https://uptask-lucassocorrosilva7.vercel.app/)
+[Front-End](https://mern-frontend-amber.vercel.app/)
 
 [Back-End](https://uptask-backend-m8hq.onrender.com/)
 
